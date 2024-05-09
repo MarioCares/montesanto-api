@@ -1,7 +1,10 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
+import posts from "../routes/posts";
 
 const app = new Hono()
+
+app.route('/publicacion', posts);
 
 app.get('/', (c) => {
   return c.text('Hello Hono!')
