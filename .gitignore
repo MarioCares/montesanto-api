@@ -1,0 +1,7 @@
+node_modules
+.env
+/.idea/.gitignore
+/.idea/modules.xml
+/.idea/prettier.xml
+/.idea/montesanto-api.iml
+/.idea/vcs.xml
