@@ -5,3 +5,6 @@ node_modules
 /.idea/prettier.xml
 /.idea/montesanto-api.iml
 /.idea/vcs.xml
+/.idea/deployment.xml
+/.idea/sshConfigs.xml
+/.idea/webServers.xml
