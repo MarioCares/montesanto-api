@@ -1,10 +1,9 @@
-import { PrismaClient } from "@prisma/client";
 import { ICreatePost } from "../interfaces/ICreatePost";
+import prisma from "../utils/prisma";
 
 export const PostService = {
   get: async function () {
     try {
-      const prisma = new PrismaClient();
       return await prisma.post.findMany({
         orderBy: [{ postAt: "desc" }],
         include: {
@@ -19,7 +18,6 @@ export const PostService = {
 
   getBySlug: async function (slug: string) {
     try {
-      const prisma = new PrismaClient();
       return await prisma.post.findUnique({
         where: {
           slug,
@@ -34,7 +32,6 @@ export const PostService = {
 
   getTags: async function () {
     try {
-      const prisma = new PrismaClient();
       const response = await prisma.postTags.groupBy({
         by: ["description"],
       });
@@ -50,7 +47,6 @@ export const PostService = {
 
   getByTag: async function (tag: string) {
     try {
-      const prisma = new PrismaClient();
       return await prisma.post.findMany({
         orderBy: [
           {
@@ -68,7 +64,6 @@ export const PostService = {
 
   getCategories: async function () {
     try {
-      const prisma = new PrismaClient();
       const response = await prisma.post.groupBy({
         by: ["category"],
         _count: {
@@ -87,7 +82,6 @@ export const PostService = {
 
   getByCategory: async function (category: string) {
     try {
-      const prisma = new PrismaClient();
       return await prisma.post.findMany({
         orderBy: [
           {
@@ -107,7 +101,6 @@ export const PostService = {
 
   create: async function (requestData: ICreatePost) {
     try {
-      const prisma = new PrismaClient();
       const postTags = requestData.tags!.map((tag: string) => ({
         description: tag,
       }));
@@ -127,7 +120,6 @@ export const PostService = {
 
   deleteAll: async function () {
     try {
-      const prisma = new PrismaClient();
       return await prisma.post.deleteMany();
     } catch (error: any) {
       console.error("PostService.deleteAll error: ", error);
