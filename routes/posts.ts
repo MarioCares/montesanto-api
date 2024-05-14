@@ -4,8 +4,14 @@ import { PostService } from "../services/post.service";
 const app = new Hono();
 
 app.get("/", async (c) => {
+  const { limit, offset } = c.req.query();
   try {
-    return c.json(await PostService.get());
+    return c.json(
+      await PostService.get(
+        limit ? Number(limit) : 10,
+        offset ? Number(offset) : 0
+      )
+    );
   } catch (error: any) {
     return c.json({ error: error.message }, 500);
   }
@@ -39,6 +45,16 @@ app.get("/categoria/:categoria", async (c) => {
   try {
     return c.json(await PostService.getByCategory(c.req.param("categoria")));
   } catch (error: any) {
+    return c.json({ error: error.message }, 500);
+  }
+});
+
+app.get("/ultima-palabra", async (c) => {
+  try {
+    const post = await PostService.getLastDominical();
+    return c.json(post);
+  } catch (error: any) {
+    console.error("/publicacion/ultima-palabra GET -> ", error, error);
     return c.json({ error: error.message }, 500);
   }
 });

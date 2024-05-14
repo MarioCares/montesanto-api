@@ -22,6 +22,7 @@ model Post {
   originallyPublish String
   body              String
   title             String
+  subtitle          String?
   publisher         String
   category          String
   createdAt         DateTime   @default(now())
@@ -38,4 +39,15 @@ model PostTags {
   description String
 
   @@map("posts_tags")
+}
+
+model Song {
+  id       Int    @id @default(autoincrement())
+  title    String
+  number   Int?
+  body     String @db.Text
+  category String
+  likes    Int
+
+  @@map("songs")
 }

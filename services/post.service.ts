@@ -2,13 +2,15 @@ import { ICreatePost } from "../interfaces/ICreatePost";
 import prisma from "../utils/prisma";
 
 export const PostService = {
-  get: async function () {
+  get: async function (limit: number, offset: number) {
     try {
       return await prisma.post.findMany({
         orderBy: [{ postAt: "desc" }],
         include: {
           PostTags: true,
         },
+        take: limit,
+        skip: offset,
       });
     } catch (error: any) {
       console.error("PostService.get error: ", error);
@@ -96,6 +98,25 @@ export const PostService = {
     } catch (error: any) {
       console.error("PostService.getByCategory error: ", error);
       throw new Error(`PostService.getByCategory error: ${error}`);
+    }
+  },
+
+  getLastDominical: async function () {
+    try {
+      return await prisma.post.findFirst({
+        orderBy: [
+          {
+            postAt: "desc",
+          },
+        ],
+        where: {
+          category: "Palabra Dominical",
+        },
+        include: { PostTags: true },
+      });
+    } catch (error: any) {
+      console.error("PostService.getLastDominical error: ", error);
+      throw new Error(`PostService.getLastDominical error: ${error}`);
     }
   },
 
