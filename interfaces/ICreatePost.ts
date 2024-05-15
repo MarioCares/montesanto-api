@@ -9,5 +9,6 @@ export interface ICreatePost {
   subtitle: string;
   publisher: string;
   category: string;
+  lectureTime: number;
   tags?: string[];
 }
