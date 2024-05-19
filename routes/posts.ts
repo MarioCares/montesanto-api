@@ -4,12 +4,13 @@ import { PostService } from "../services/post.service";
 const app = new Hono();
 
 app.get("/", async (c) => {
-  const { limit, offset } = c.req.query();
+  const { limit, offset, category } = c.req.query();
   try {
     return c.json(
       await PostService.get(
         limit ? Number(limit) : 10,
-        offset ? Number(offset) : 0
+        offset ? Number(offset) : 0,
+        category ?? ""
       )
     );
   } catch (error: any) {

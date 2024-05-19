@@ -1,10 +1,15 @@
 import { ICreatePost } from "../interfaces/ICreatePost";
 import prisma from "../utils/prisma";
+import { POST_CATEGORY } from "../utils/constants";
 
 export const PostService = {
-  get: async function (limit: number, offset: number) {
+  get: async function (limit: number, offset: number, category: string) {
+    const categoryFilter = category === "" ? { in: POST_CATEGORY } : category;
     try {
       return await prisma.post.findMany({
+        where: {
+          category: categoryFilter,
+        },
         orderBy: [{ postAt: "desc" }],
         include: {
           PostTags: true,
