@@ -52,3 +52,12 @@ model Song {
 
   @@map("songs")
 }
+
+model Message {
+  id    Int    @id @default(autoincrement())
+  name  String
+  email String
+  text  String @db.Text
+
+  @@map("messages")
+}
