@@ -1,22 +1,13 @@
 import { ICreatePost } from "../interfaces/ICreatePost";
 import prisma from "../utils/prisma";
 import { POST_CATEGORY } from "../utils/constants";
+import { PostsRepository } from "../repositories/posts.repository";
 
 export const PostService = {
   get: async function (limit: number, offset: number, category: string) {
     const categoryFilter = category === "" ? { in: POST_CATEGORY } : category;
     try {
-      return await prisma.post.findMany({
-        where: {
-          category: categoryFilter,
-        },
-        orderBy: [{ postAt: "desc" }],
-        include: {
-          PostTags: true,
-        },
-        take: limit,
-        skip: offset,
-      });
+      return await PostsRepository.get(limit, offset, categoryFilter);
     } catch (error: any) {
       console.error("PostService.get error: ", error);
       throw new Error("PostService.get error: ", error);
@@ -25,12 +16,7 @@ export const PostService = {
 
   getBySlug: async function (slug: string) {
     try {
-      return await prisma.post.findUnique({
-        where: {
-          slug,
-        },
-        include: { PostTags: true },
-      });
+      return await PostsRepository.getBySlug(slug);
     } catch (error: any) {
       console.error("PostService.getBySlug error: ", error);
       throw new Error(`PostService.getBySlug error: ${error}`);
@@ -39,9 +25,7 @@ export const PostService = {
 
   getTags: async function () {
     try {
-      const response = await prisma.postTags.groupBy({
-        by: ["description"],
-      });
+      const response = await PostsRepository.getTags();
       const tags = response.map(
         (tag: { description: string }) => tag.description
       );
@@ -54,15 +38,7 @@ export const PostService = {
 
   getByTag: async function (tag: string) {
     try {
-      return await prisma.post.findMany({
-        orderBy: [
-          {
-            postAt: "desc",
-          },
-        ],
-        include: { PostTags: true },
-        where: { PostTags: { some: { description: tag } } },
-      });
+      return await PostsRepository.getByTag(tag);
     } catch (error: any) {
       console.error("PostService.getByTag error: ", error);
       throw new Error(`PostService.getByTag error: ${error}`);
@@ -71,12 +47,7 @@ export const PostService = {
 
   getCategories: async function () {
     try {
-      const response = await prisma.post.groupBy({
-        by: ["category"],
-        _count: {
-          _all: true,
-        },
-      });
+      const response = await PostsRepository.getCategories();
       return response.reduce((acc: { [key: string]: number }, curr) => {
         acc[curr.category] = curr._count._all;
         return acc;
@@ -89,17 +60,7 @@ export const PostService = {
 
   getByCategory: async function (category: string) {
     try {
-      return await prisma.post.findMany({
-        orderBy: [
-          {
-            postAt: "desc",
-          },
-        ],
-        where: {
-          category,
-        },
-        include: { PostTags: true },
-      });
+      return PostsRepository.getByCategory(category);
     } catch (error: any) {
       console.error("PostService.getByCategory error: ", error);
       throw new Error(`PostService.getByCategory error: ${error}`);
@@ -108,17 +69,7 @@ export const PostService = {
 
   getLastDominical: async function () {
     try {
-      return await prisma.post.findFirst({
-        orderBy: [
-          {
-            postAt: "desc",
-          },
-        ],
-        where: {
-          category: "Palabra Dominical",
-        },
-        include: { PostTags: true },
-      });
+      return await PostsRepository.getLastDominical();
     } catch (error: any) {
       console.error("PostService.getLastDominical error: ", error);
       throw new Error(`PostService.getLastDominical error: ${error}`);
@@ -133,20 +84,18 @@ export const PostService = {
       const postData = { ...requestData, PostTags: { create: postTags } };
       delete postData.tags;
 
-      return await prisma.post.create({
-        data: postData,
-      });
+      return await PostsRepository.create(postData);
     } catch (error: any) {
       console.error("PostService.create error: ", error);
       throw new Error(
-        `PostService.post error: ${error.meta ? error.meta.target : error}`
+        `PostService.create error: ${error.meta ? error.meta.target : error}`
       );
     }
   },
 
   deleteAll: async function () {
     try {
-      return await prisma.post.deleteMany();
+      return await PostsRepository.deleteAll();
     } catch (error: any) {
       console.error("PostService.deleteAll error: ", error);
       throw new Error(`PostService.deleteAll error: ${error}`);

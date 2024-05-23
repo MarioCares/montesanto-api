@@ -1,19 +1,13 @@
 import prisma from "../utils/prisma";
+import { SongsRepository } from "../repositories/songs.repository";
 
 export const SongService = {
   get: async function () {
     try {
-      return await prisma.song.findMany({
-        select: {
-          id: true,
-          number: true,
-          title: true,
-        },
-        orderBy: [{ number: "desc" }],
-      });
+      return await SongsRepository.get();
     } catch (error: any) {
-      console.error("PostService.get error: ", error);
-      throw new Error("PostService.get error: ", error);
+      console.error("SongService.get error: ", error);
+      throw new Error("SongService.get error: ", error);
     }
   },
 };

@@ -1,7 +1,12 @@
 import { Hono } from "hono";
 import { PostService } from "../services/post.service";
+import { User } from "lucia";
 
-const app = new Hono();
+const app = new Hono<{
+  Variables: {
+    user: User | null;
+  };
+}>();
 
 app.get("/", async (c) => {
   const { limit, offset, category } = c.req.query();
@@ -20,6 +25,13 @@ app.get("/", async (c) => {
 
 app.get("/tags", async (c) => {
   try {
+    // const user = c.get("user");
+    // if (!user) {
+    //   return c.json(
+    //     { message: "Usuario no identificado", statusCode: 401 },
+    //     401
+    //   );
+    // }
     return c.json(await PostService.getTags());
   } catch (error: any) {
     return c.json({ error: error.message }, 500);

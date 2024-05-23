@@ -1,12 +1,11 @@
 import { ICreateMessage } from "../interfaces/ICreateMessage";
 import prisma from "../utils/prisma";
+import { MessagesRepository } from "../repositories/messages.repository";
 
 export const MessageService = {
   create: async function (requestData: ICreateMessage) {
     try {
-      return await prisma.message.create({
-        data: requestData,
-      });
+      return await MessagesRepository.create(requestData);
     } catch (error: any) {
       console.error("MessageService.create error: ", error);
       throw new Error(
