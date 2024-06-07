@@ -43,14 +43,24 @@ model PostTags {
 }
 
 model Song {
-  id       Int    @id @default(autoincrement())
-  title    String
-  number   Int?
-  body     String @db.Text
-  category String
-  likes    Int
+  id        Int         @id @default(autoincrement())
+  title     String
+  number    Int?
+  body      String      @db.Text
+  category  String
+  userSongs UserSongs[]
 
   @@map("songs")
+}
+
+model UserSongs {
+  id     Int    @id @default(autoincrement())
+  songId Int
+  song   Song   @relation(fields: [songId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("user_songs")
 }
 
 model Message {
@@ -63,11 +73,12 @@ model Message {
 }
 
 model User {
-  id            String    @id
-  email         String    @unique
+  id            String      @id
+  email         String      @unique
   userName      String
   password_hash String
   sessions      Session[]
+  userSongs     UserSongs[]
 }
 
 model Session {
